@@ -1,0 +1,29 @@
+{
+  "name": "fun-cocktail-bar",
+  "version": "1.0.0",
+  "description": "Compute the cheapest set of ingredients that makes the largest number of cocktails",
+  "author": "Axel Bocciarelli",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/axelboc/fun-cocktail-bar.git"
+  },
+  "engines": {
+    "node": "0.12.7"
+  },
+  "main": "index.js",
+  "config": {
+    "budget": 200
+  },
+  "scripts": {
+    "start": "babel-node index.js --presets es2015",
+    "test": "mocha"
+  },
+  "dependencies": {
+    "babel-cli": "^6.4.0",
+    "babel-core": "^6.4.0",
+    "babel-polyfill": "^6.3.14",
+    "babel-preset-es2015": "^6.3.13",
+    "bluebird": "^3.1.1"
+  }
+}

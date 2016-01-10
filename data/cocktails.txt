@@ -1,0 +1,12 @@
+Bloody Mary           vodka,worcester sauce,tomato juice,lemon juice
+Corkscrew             white rum,dry vermouth,peach schnapps
+Daiquiri              white rum,sugar syrup,lime juice
+Gin Fizz              gin,sugar syrup,lemon juice,soda
+Long Island Iced Tea  tequilla,vodka,white rum,orange liqueur,gin,lemon juice,sugar syrup,cola
+Margarita             tequilla,orange liqueur,lime juice
+Martini               gin,dry vermouth
+Mojito                white rum,lime juice,soda
+Pina Colada           white rum,coconut liqueur,pineapple juice
+Screwdriver           vodka,orange juice
+Sex On The Beach      vodka,peach schnapps,orange juice,cranberry juice
+Tequilla Sunrise      tequilla,grenadine,orange juice

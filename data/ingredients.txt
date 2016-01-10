@@ -1,0 +1,19 @@
+coconut liqueur   15
+cola              3
+cranberry juice   7
+dry vermouth      17
+gin               34
+grenadine         13
+lemon juice       2
+lime juice        2
+orange juice      2
+orange liqueur    48
+peach schnapps    39
+pineapple juice   3
+soda              1
+sugar syrup       15
+tequilla          40
+tomato juice      3
+vodka             30
+white rum         30
+worcester sauce   2

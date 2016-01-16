@@ -3,28 +3,37 @@ export default class CocktailBar {
   
   constructor(budget, ingredients, cocktails) {
     this.budget = budget;
-    this.ingredients = ingredients;
     this.cocktails = cocktails;
-    
+    this.ingrCosts = ingredients;
+    this.ingrValues = this.computeIngrValues(cocktails);
+  }
+  
+  /**
+   * Determine the value of each ingredient
+   * (i.e. the number of cocktails in which it is used).
+   * @param {Map<String, Array>} cocktailsIngredients - the cocktails mapped to their ingredients
+   * @return {Map<String, Number>} - the ingredients mapped to their values
+   */
+  computeIngrValues(cocktailsIngredients) {
     // Map each ingredient to the cocktails in which it is used
-    this.ingrToCocktails = new Map();
-    this.cocktails.forEach(function (ingrList, cocktail) {
-      ingrList.forEach(function (ingr) {
-        let list = this.ingrToCocktails.get(ingr) || new Set();
+    var ingrCocktails = new Map();
+    cocktailsIngredients.forEach(function (ingredients, cocktail) {
+      ingredients.forEach(function (ingr) {
+        // Use a set to store the cocktails and ensure uniqueness
+        let list = ingrCocktails.get(ingr) || new Set();
         list.add(cocktail);
-        this.ingrToCocktails.set(ingr, list);
-      }, this);
-    }, this);
+        ingrCocktails.set(ingr, list);
+      });
+    });
     
-    // Count the cocktails for each ingredient
-    this.ingrToCocktailsCount = new Map();
-    this.ingrToCocktails.forEach(function (list, ingr) {
-      this.ingrToCocktailsCount.set(ingr, list.size);
-    }, this);
+    // Compute the values
+    var values = new Map();
+    ingrCocktails.forEach(function (cocktails, ingr) {
+      values.set(ingr, cocktails.size);
+    });
     
-    // Sort from highest to lowest
-    this.ingrToCocktailsCount = new Map([...this.ingrToCocktailsCount].sort((a, b) => b[1] - a[1]));
-    console.log(...this.ingrToCocktailsCount);
+    // Sort from highest to lowest and return
+    return new Map([...values].sort((a, b) => b[1] - a[1]));
   }
   
 }

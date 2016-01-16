@@ -1,4 +1,5 @@
 // Dependencies
+import 'babel-polyfill';
 import Promise from 'bluebird';
 import nodeFS from 'fs';
 const fs = Promise.promisifyAll(nodeFS);
@@ -12,22 +13,29 @@ const BUDGET = 200;
 // Read initial data
 Promise.all([readIngredients(), readCocktails()])
   .then(function (data) {
+    // Initialise cocktail bar
     let cocktailBar = new CocktailBar(BUDGET, ...data);
   })
 
 
 /**
  * Read ingredients data.
- * @return {Promise}
+ * @return {Promise} - resolving to...
+ *         {Map<String, Number} - the ingredients mapped to their cost
  */
 function readIngredients() {
   return fs.readFileAsync('data/ingredients.txt', 'utf8')
-    .then(parseContent);
+    .then(parseContent)
+    .then(function (items) {
+      items.forEach((val, key) => items.set(key, Number.parseInt(val, 10)));
+      return items;
+    });
 }
 
 /**
  * Read ingredients data.
- * @return {Promise}
+ * @return {Promise} - resolving to...
+ *         {Map<String, Array>} - the cocktails mapped to their ingredients
  */
 function readCocktails() {
   return fs.readFileAsync('data/cocktails.txt', 'utf8')

@@ -3,12 +3,11 @@ import 'babel-polyfill';
 import Promise from 'bluebird';
 import nodeFS from 'fs';
 const fs = Promise.promisifyAll(nodeFS);
-import CocktailBar from './cocktail-bar';
+import CocktailBar, { ALGORITHMS } from './cocktail-bar';
 
 
 // Config
-const BUDGET = 200;
-const ALGORITHM = 'greedy';
+const BUDGET = 100;
 
 
 // Read initial data
@@ -18,7 +17,7 @@ Promise.all([readIngredients(), readCocktails()])
     let cocktailBar = new CocktailBar(BUDGET, ...data);
     
     // Solve the problem
-    let solution = cocktailBar.solve(ALGORITHM);
+    let solution = cocktailBar.solve(ALGORITHMS.greedy);
     
     // Print the result
     console.log("Total cost:", solution.totalCost);

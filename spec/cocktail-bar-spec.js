@@ -1,4 +1,4 @@
-import CocktailBar from '../cocktail-bar';
+import CocktailBar, { ALGORITHMS } from '../cocktail-bar';
 
 describe("CocktailBar", function() {
   
@@ -105,7 +105,7 @@ describe("CocktailBar", function() {
   
   describe("#solve", function () {
     it("can solve the problem with a greedy algorithm", function () {
-      let solution = this.bar.solve('greedy');
+      let solution = this.bar.solve(ALGORITHMS.greedy);
       expect(solution).toEqual(SOLUTION);
     });
   });

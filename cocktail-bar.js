@@ -1,4 +1,8 @@
 
+export const ALGORITHMS = {
+  greedy: 0
+}
+
 export default class CocktailBar {
   
   constructor(budget, ingredients, cocktails) {
@@ -34,8 +38,8 @@ export default class CocktailBar {
   computeIngrValues(ingrCocktails) {
     // Compute the values
     let ingrValues = new Map();
-    ingrCocktails.forEach(function (cocktails, ingr) {
-      ingrValues.set(ingr, cocktails.length);
+    ingrCocktails.forEach(function (list, ingr) {
+      ingrValues.set(ingr, list.length);
     });
     
     // Sort from highest to lowest and return
@@ -79,14 +83,15 @@ export default class CocktailBar {
    */
   solve(algorithm) {
     let ingrCocktails = this.mapIngrToCocktails(this.cocktails);
-    let ingrValues = this.computeIngrValues(ingrCocktails);
-    let ingrRatios = this.computeIngrRatios(this.ingrCosts, ingrValues);
     
-    let solution;
+    let ingrValues, ingrRatios, solution;
     
     switch (algorithm) {
-      case 'greedy':
+      case ALGORITHMS.greedy:
+        ingrValues = this.computeIngrValues(ingrCocktails);
+        ingrRatios = this.computeIngrRatios(this.ingrCosts, ingrValues);
         solution = this.solveGreedy(this.budget, this.ingrCosts, ingrRatios);
+        break;
     }
     
     // Find possible cocktails and deduce total value

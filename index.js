@@ -7,8 +7,8 @@ import CocktailBar, { ALGORITHMS } from './cocktail-bar';
 
 
 // Config
-const BUDGET = 100;
-const ALGO = ALGORITHMS.dp;
+const BUDGET = 200;
+const ALGO = ALGORITHMS.customGreedy;
 
 
 // Read initial data

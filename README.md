@@ -16,16 +16,18 @@ At first, this seems to be a simple variant of the [Knapsack problem](https://en
 However, after further investigation, the two problems differ significantly: unlike a knapsack item with its cost, **an ingredient does not have a meaningful value of its own**; only a set of ingredients does. For instance, you could very well have a set of 10 ingredients that doesn't allow you to make a single cocktail (`value=0`), but by adding just one more, be able to make 10 cocktails (`value=10`) -- the last ingredient does not have a value of 10; the whole set does.
 
 ## Algorithms
-### Greedy & Dynamic programing
+### Classic greedy & dynamic programing
 The two most popular knapsack algorithms require items to have individual values, which means they cannot work well in our situation. I have implemented them anyway, as an experiment, with the assumption that the most logical value for an ingredient is the number of cocktails in which it is used. This leads to highly innacurate results, but results nonetheless.
 
-### Custom greedy (not yet implemented)
-This greedy algorithm works as follows:
+### Custom greedy
+This greedy, approximation algorithm works as follows:
 1. Let `S` be the set of ingredients, which value we want to maximise.
 2. Compute the total cost of each cocktail's ingredients.
 3. Find the cocktail with the lowest total cost.
 4. Add this cocktail's ingredients to `S` if the budget allows it (otherwise, stop here without adding the ingredients)
 5. Remove the selected ingredients from every cocktail and start again from step 2.
 
+The algorithm seems to work better than the classic knapsack greedy algorithm, but the brute force algorithm will tell whether that is sufficient. Its main strength, which would be valuable in a real-life scenario, is that it doesn't try to get as close to the maximum budget as possible by adding extra, useless ingredients. 
+
 ### Brute force (not yet implemented)
-This algorithm computes the value of every possible set of ingredients. A potential optimisation could take advantage of the fact that adding an ingredient cannot decrease the value of a set; the value can only increase or stay the same. For obvious reasons, this algorithm performs very poorly with large numbers of ingredients.
+This algorithm will compute the value of every possible set of ingredients. A potential optimisation might take advantage of the fact that adding an ingredient cannot decrease the value of a set (the value can only increase or stay the same). For obvious reasons, this algorithm will perform very poorly for large numbers of ingredients and cocktails.

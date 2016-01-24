@@ -1,7 +1,8 @@
 
 export const ALGORITHMS = {
   greedy: 0,
-  dp: 1
+  dp: 1,
+  customGreedy: 2
 }
 
 export default class CocktailBar {
@@ -34,6 +35,9 @@ export default class CocktailBar {
       case ALGORITHMS.dp:
         ingrValues = this.computeIngrValues(ingrCocktails);
         solution = this.solveDP(this.budget, this.ingrCosts, ingrValues);
+        break;
+      case ALGORITHMS.customGreedy:
+        solution = this.solveCustomGreedy(this.budget, this.cocktails, this.ingrCosts);
         break;
     }
     
@@ -70,7 +74,7 @@ export default class CocktailBar {
     });
     
     return {
-      ingredients,
+      ingredients: ingredients.sort(),
       totalCost
     };
   }
@@ -129,8 +133,78 @@ export default class CocktailBar {
     // Find final set and compute total cost
     const ingredients = barMatrix[costEntries.length][budget];
     return {
-      ingredients: ingredients,
+      ingredients: ingredients.sort(),
       totalCost: ingredients.reduce((total, ingr) => total + costs.get(ingr), 0)
+    };
+  }
+  
+  /**
+   * Solve the problem with a custom greedy algorithm.
+   * @param {Number} budget
+   * @param {Map<String, Array<String>>} cocktails
+   * @param {Map<String, Number>} costs
+   * @return {Object}
+   *         {Array<String>} ingredients - the selected ingredients
+   *         {Number} totalCost - their total cost
+   */
+  solveCustomGreedy(budget, cocktails, costs) {
+    let totalCost = 0;
+    let ingredients = [];
+    
+    // Make a copy of the cocktails map
+    cocktails = new Map([...cocktails]);
+    
+    // Compute the total cost of each cocktail's ingredients
+    let cocktailCosts = new Map();
+    cocktails.forEach(function (list, cocktail) {
+      cocktailCosts.set(cocktail, list.reduce((total, ingr) => total + costs.get(ingr), 0));
+    })
+    
+    // Repeat until there's no cocktail left (or the budget has been reached)
+    while (cocktails.size > 0) {
+      // Find the cheapest cocktail
+      let min, cheapest;
+      cocktailCosts.forEach(function (cost, cocktail) {
+        if (!min || cost < min) {
+          min = cost;
+          cheapest = cocktail;
+        }
+      })
+      
+      // If the min cost brings the total above the budget, stop here
+      if (totalCost + min > budget) {
+        break;
+      }
+      
+      // Otherwise, add the cocktail's ingredients to the list
+      let newIngredients = cocktails.get(cheapest);
+      ingredients.push(...newIngredients);
+      totalCost += min;
+      
+      // Then, remove the new ingredients from the remaining cocktails and update the cocktails' costs
+      cocktails.forEach(function (list, cocktail) {
+        let set = new Set(list);
+        newIngredients.forEach(function (ingr) {
+          if (set.has(ingr)) {
+            set.delete(ingr);
+            cocktailCosts.set(cocktail, cocktailCosts.get(cocktail) - costs.get(ingr));
+          }
+        });
+        
+        if (set.size === 0) {
+          // If the cocktail has no remaining ingredients, remove it
+          cocktails.delete(cocktail);
+          cocktailCosts.delete(cocktail);
+        } else {
+          // Otherwise, update its list of ingredients
+          cocktails.set(cocktail, [...set]);
+        }
+      });
+    }
+    
+    return {
+      ingredients: ingredients.sort(),
+      totalCost
     };
   }
   
@@ -216,8 +290,7 @@ export default class CocktailBar {
         possibleCocktails.push(cocktail);
       }
     });
-    //console.log(...selectedIngredients);
-    //console.log(...possibleCocktails);
+    
     return possibleCocktails;
   }
   
@@ -230,12 +303,6 @@ export default class CocktailBar {
   computeDiff(arrA, arrB) {
     let setB = new Set(arrB);
     return arrA.filter(item => !setB.has(item));
-  }
-  
-  logMatrix(matrix) {
-    matrix.forEach(function (row) {
-      console.log(row.join('|'));
-    })
   }
   
 }

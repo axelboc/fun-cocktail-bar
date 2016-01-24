@@ -113,6 +113,16 @@ describe("CocktailBar", function() {
     });
   });
   
+  describe("#solveCustomGreedy", function () {
+    it("finds the optimal set of ingredients for the bar using a custom greedy algorithm", function () {
+      let solution = this.bar.solveCustomGreedy(BUDGET, COCKTAILS, INGREDIENTS);
+      expect(solution).toEqual({
+        ingredients: SOLUTION.ingredients,
+        totalCost: SOLUTION.totalCost
+      });
+    });
+  });
+  
   describe("#solve", function () {
     it("can solve the problem with a greedy algorithm", function () {
       let solution = this.bar.solve(ALGORITHMS.greedy);
@@ -120,6 +130,10 @@ describe("CocktailBar", function() {
     });
     it("can solve the problem with a dynamic programming algorithm", function () {
       let solution = this.bar.solve(ALGORITHMS.dp);
+      expect(solution).toEqual(SOLUTION);
+    });
+    it("can solve the problem with a custom greedy algorithm", function () {
+      let solution = this.bar.solve(ALGORITHMS.customGreedy);
       expect(solution).toEqual(SOLUTION);
     });
   });

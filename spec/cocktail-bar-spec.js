@@ -79,16 +79,6 @@ describe("CocktailBar", function() {
     });
   });
   
-  describe("#solveGreedy", function () {
-    it("finds the optimal set of ingredients for the bar using a greedy algorithm", function () {
-      let solution = this.bar.solveGreedy(BUDGET, INGREDIENTS, INGR_RATIOS);
-      expect(solution).toEqual({
-        ingredients: SOLUTION.ingredients,
-        totalCost: SOLUTION.totalCost
-      });
-    });
-  });
-  
   describe("#findPossibleCocktails", function () {
     it("finds the cocktails that can be made with a specific set of ingredients", function () {
       let cocktails = this.bar.findPossibleCocktails(COCKTAILS, SOLUTION.ingredients);
@@ -103,9 +93,33 @@ describe("CocktailBar", function() {
     });
   });
   
+  describe("#solveGreedy", function () {
+    it("finds the optimal set of ingredients for the bar using a greedy algorithm", function () {
+      let solution = this.bar.solveGreedy(BUDGET, INGREDIENTS, INGR_RATIOS);
+      expect(solution).toEqual({
+        ingredients: SOLUTION.ingredients,
+        totalCost: SOLUTION.totalCost
+      });
+    });
+  });
+  
+  describe("#solveDP", function () {
+    it("finds the optimal set of ingredients for the bar using a DP algorithm", function () {
+      let solution = this.bar.solveDP(BUDGET, INGREDIENTS, INGR_VALUES);
+      expect(solution).toEqual({
+        ingredients: SOLUTION.ingredients,
+        totalCost: SOLUTION.totalCost
+      });
+    });
+  });
+  
   describe("#solve", function () {
     it("can solve the problem with a greedy algorithm", function () {
       let solution = this.bar.solve(ALGORITHMS.greedy);
+      expect(solution).toEqual(SOLUTION);
+    });
+    it("can solve the problem with a dynamic programming algorithm", function () {
+      let solution = this.bar.solve(ALGORITHMS.dp);
       expect(solution).toEqual(SOLUTION);
     });
   });

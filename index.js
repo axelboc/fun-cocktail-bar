@@ -8,6 +8,7 @@ import CocktailBar, { ALGORITHMS } from './cocktail-bar';
 
 // Config
 const BUDGET = 100;
+const ALGO = ALGORITHMS.dp;
 
 
 // Read initial data
@@ -17,7 +18,7 @@ Promise.all([readIngredients(), readCocktails()])
     let cocktailBar = new CocktailBar(BUDGET, ...data);
     
     // Solve the problem
-    let solution = cocktailBar.solve(ALGORITHMS.greedy);
+    let solution = cocktailBar.solve(ALGO);
     
     // Print the result
     console.log("Total cost:", solution.totalCost);

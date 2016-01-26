@@ -1,8 +1,9 @@
 
 export const ALGORITHMS = {
-  greedy: 0,
-  dp: 1,
-  customGreedy: 2
+  greedy: 'greedy',
+  dp: 'dynamic programming',
+  customGreedy: 'custom greedy',
+  bruteForce: 'brute force'
 }
 
 export default class CocktailBar {
@@ -19,7 +20,10 @@ export default class CocktailBar {
    * @return {Object}
    *         {Array<String>} ingredients - the selected ingredients
    *         {Number} totalCost - their total cost
-   *         {Number} totalValue - their total value
+   *         {Array<String>} cocktails - the selected cocktails
+   *         {Number} totalValue - the number of selected cocktails
+   *         {Array<String>} excludedIngredients
+   *         {Array<String>} excludedCocktails
    */
   solve(algorithm) {
     let ingrCocktails = this.mapIngrToCocktails(this.cocktails);
@@ -39,11 +43,16 @@ export default class CocktailBar {
       case ALGORITHMS.customGreedy:
         solution = this.solveCustomGreedy(this.budget, this.cocktails, this.ingrCosts);
         break;
+      case ALGORITHMS.bruteForce:
+        solution = this.solveBruteForce(this.budget, this.cocktails, this.ingrCosts);
+        break;
     }
     
     // Find possible cocktails and deduce total value
-    solution.cocktails = this.findPossibleCocktails(this.cocktails, solution.ingredients);
-    solution.totalValue = solution.cocktails.length;
+    if (!solution.cocktails || !solution.totalValue) {
+      solution.cocktails = this.findPossibleCocktails(this.cocktails, solution.ingredients);
+      solution.totalValue = solution.cocktails.length;
+    }
     
     // Compute excluded ingredients and cocktails
     solution.excludedIngredients = this.computeDiff([...this.ingrCosts.keys()], solution.ingredients);
@@ -206,6 +215,68 @@ export default class CocktailBar {
       ingredients: ingredients.sort(),
       totalCost
     };
+  }
+  
+  /**
+   * Solve the problem with a brute force algorithm.
+   * @param {Number} budget
+   * @param {Map<String, Array<String>>} cocktails
+   * @param {Map<String, Number>} costs
+   * @return {Object}
+   *         {Array<String>} ingredients - the selected ingredients
+   *         {Number} totalCost - their total cost
+   */
+  solveBruteForce(budget, cocktails, costs) {
+    const ingredients = [...costs.keys()];
+    
+    /**
+     * Returns the best result of calling itself with and without selecting
+     * the next ingredient in the list.
+     * @param {Number} ingrIndex - index of the next ingredient in the `ingredients` array 
+     * @param {Array<String>} currSelection - the current selection of ingredients
+     * @param {Number} currCost - the total cost of the current selection
+     * @return {Object}
+     *         {Array<String>} ingredients - the selected ingredients
+     *         {Number} totalCost - their total cost
+     *         {Array<String>} cocktails - the selected cocktails
+     *         {Number} totalValue - the number of selected cocktails
+     */
+    const findBestIngredients = function (ingrIndex, currSelection, currCost) {
+      // Base case: no more ingredients
+      if (ingrIndex >= ingredients.length) {
+        // Compute and return the result for the current selection
+        let possibleCocktails = this.findPossibleCocktails(cocktails, currSelection);
+        return {
+          ingredients: currSelection,
+          totalCost: currCost,
+          cocktails: possibleCocktails,
+          totalValue: possibleCocktails.length
+        };
+      }
+
+      const ingr = ingredients[ingrIndex];
+      const ingrCost = costs.get(ingr); 
+      let bestWithoutIngr, bestWithIngr;
+      
+      // Recurse without selecting the ingredient
+      bestWithoutIngr = findBestIngredients(ingrIndex + 1, [...currSelection], currCost);
+      
+      // If selecting the ingredient does not go over budget, do so and recurse
+      if (currCost + ingrCost <= budget) {
+        bestWithIngr = findBestIngredients(ingrIndex + 1, [...currSelection, ingr], currCost + ingrCost);
+      }
+      
+      // Return the best or only result
+      // If the value is the same with and without the ingredient, return the result without
+      if (bestWithIngr && bestWithIngr.totalValue > bestWithoutIngr.totalValue) {
+        return bestWithIngr;
+      } else {
+        return bestWithoutIngr;
+      }
+    }.bind(this);
+    
+    // Call recursive function
+    return findBestIngredients(0, [], 0);
   }
   
   /**

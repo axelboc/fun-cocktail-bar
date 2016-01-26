@@ -17,17 +17,20 @@ However, after further investigation, the two problems differ significantly: unl
 
 ## Algorithms
 ### Classic greedy & dynamic programing
-The two most popular knapsack algorithms require items to have individual values, which means they cannot work well in our situation. I have implemented them anyway, as an experiment, with the assumption that the most logical value for an ingredient is the number of cocktails in which it is used. This leads to highly innacurate results, but results nonetheless.
+The two most popular knapsack algorithms require items to have individual values, which means they **cannot work well** in our situation. I have implemented them anyway, as an experiment, with the assumption that the most logical value for an ingredient is the number of cocktails in which it is used. This leads to highly innacurate results, but results nonetheless.
 
 ### Custom greedy
 This greedy, approximation algorithm works as follows:
+
 1. Let `S` be the set of ingredients, which value we want to maximise.
 2. Compute the total cost of each cocktail's ingredients.
 3. Find the cocktail with the lowest total cost.
 4. Add this cocktail's ingredients to `S` if the budget allows it (otherwise, stop here without adding the ingredients)
 5. Remove the selected ingredients from every cocktail and start again from step 2.
 
-The algorithm seems to work better than the classic knapsack greedy algorithm, but the brute force algorithm will tell whether that is sufficient. Its main strength, which would be valuable in a real-life scenario, is that it doesn't try to get as close to the maximum budget as possible by adding extra, useless ingredients. 
+This algorithm works **significantly better** than, and is **just as fast** as, the classic knapsack greedy algorithm. Its main strength in comparison is also that it doesn't try to get as close to the maximum budget as possible by adding extra, useless ingredients.
 
-### Brute force (not yet implemented)
-This algorithm will compute the value of every possible set of ingredients. A potential optimisation might take advantage of the fact that adding an ingredient cannot decrease the value of a set (the value can only increase or stay the same). For obvious reasons, this algorithm will perform very poorly for large numbers of ingredients and cocktails.
+Compared to the brute force algorithm below, this algorithm achieves almost as good results and is, of course, much faster. It is, without a doubt, **the best algorithm** to solve the problem when dealing with a large data set of cocktails and ingredients.
+
+### Brute force
+This algorithm computes the value of **every possible set of ingredients**, then returns the one with the highest value within the given buget. If multiple sets compete for the highest value, the cheapest one is returned - in other words, if adding an ingredient to the set doesn't lead to a better value, the ingredient is not added (even if it still fits within the budget). The algorithm has an **exponential complexity**, which means that it cannot be used on large data sets.

@@ -28,9 +28,9 @@ This greedy, approximation algorithm works as follows:
 4. Add this cocktail's ingredients to `S` if the budget allows it (otherwise, stop here without adding the ingredients)
 5. Remove the selected ingredients from every cocktail and start again from step 2.
 
-This algorithm works **significantly better** than, and is **just as fast** as, the classic knapsack greedy algorithm. Its main strength in comparison is also that it doesn't try to get as close to the maximum budget as possible by adding extra, useless ingredients.
+This algorithm works **significantly better** than, and is **just as fast** as, the classic knapsack greedy algorithm. Moreover, its main strength in comparison is that it doesn't try to get as close to the maximum budget as possible by adding extra, useless ingredients.
 
-Compared to the brute force algorithm below, this algorithm achieves almost as good results and is, of course, much faster. It is, without a doubt, **the best algorithm** to solve the problem when dealing with a large data set of cocktails and ingredients.
+Compared to the brute force algorithm below, this algorithm achieves almost as good results and is, of course, much faster. It is, without a doubt, **the best algorithm** to solve the problem when dealing with **large data sets** of cocktails and ingredients.
 
 ### Brute force
-This algorithm computes the value of **every possible set of ingredients**, then returns the one with the highest value within the given buget. If multiple sets compete for the highest value, the cheapest one is returned - in other words, if adding an ingredient to the set doesn't lead to a better value, the ingredient is not added (even if it still fits within the budget). The algorithm has an **exponential complexity**, which means that it cannot be used on large data sets.
+This algorithm computes the value of **every possible set of ingredients**, then returns the one with the highest value within the given buget. If multiple sets compete for the highest value, the cheapest one is returned - in other words, if adding an ingredient to the set doesn't lead to a better value, the ingredient is not added (even if it still fits within the budget - the custom greedy algorithm above has a similar behaviour). The algorithm has an **exponential complexity**, which means that it cannot be used on large data sets.

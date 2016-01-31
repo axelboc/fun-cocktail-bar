@@ -2,8 +2,8 @@
 export const ALGORITHMS = {
   greedy: 'greedy',
   dp: 'dynamic programming',
-  customGreedy: 'custom greedy',
-  bruteForce: 'brute force'
+  bruteForce: 'brute force',
+  customGreedy: 'custom greedy'
 }
 
 export default class CocktailBar {
@@ -26,25 +26,29 @@ export default class CocktailBar {
    *         {Array<String>} excludedCocktails
    */
   solve(algorithm) {
-    let ingrCocktails = this.mapIngrToCocktails(this.cocktails);
-    
-    let ingrValues, ingrRatios, solution;
+    let ingrCocktails, ingrValues, ingrRatios;
+    let cocktailCosts, cocktailValues, cocktailRatios;
+    let solution;
     
     switch (algorithm) {
       case ALGORITHMS.greedy:
+        ingrCocktails = this.mapIngrToCocktails(this.cocktails);
         ingrValues = this.computeIngrValues(ingrCocktails);
         ingrRatios = this.computeIngrRatios(this.ingrCosts, ingrValues);
         solution = this.solveGreedy(this.budget, this.ingrCosts, ingrRatios);
         break;
       case ALGORITHMS.dp:
+        ingrCocktails = this.mapIngrToCocktails(this.cocktails);
         ingrValues = this.computeIngrValues(ingrCocktails);
         solution = this.solveDP(this.budget, this.ingrCosts, ingrValues);
         break;
-      case ALGORITHMS.customGreedy:
-        solution = this.solveCustomGreedy(this.budget, this.cocktails, this.ingrCosts);
-        break;
       case ALGORITHMS.bruteForce:
         solution = this.solveBruteForce(this.budget, this.cocktails, this.ingrCosts);
+        break;
+      case ALGORITHMS.customGreedy:
+        ingrCocktails = this.mapIngrToCocktails(this.cocktails);
+        ingrValues = this.computeIngrValues(ingrCocktails);
+        solution = this.solveCustomGreedy(this.budget, this.cocktails, this.ingrCosts, ingrValues);
         break;
     }
     
@@ -148,76 +152,6 @@ export default class CocktailBar {
   }
   
   /**
-   * Solve the problem with a custom greedy algorithm.
-   * @param {Number} budget
-   * @param {Map<String, Array<String>>} cocktails
-   * @param {Map<String, Number>} costs
-   * @return {Object}
-   *         {Array<String>} ingredients - the selected ingredients
-   *         {Number} totalCost - their total cost
-   */
-  solveCustomGreedy(budget, cocktails, costs) {
-    let totalCost = 0;
-    let ingredients = [];
-    
-    // Make a copy of the cocktails map
-    cocktails = new Map([...cocktails]);
-    
-    // Compute the total cost of each cocktail's ingredients
-    let cocktailCosts = new Map();
-    cocktails.forEach(function (list, cocktail) {
-      cocktailCosts.set(cocktail, list.reduce((total, ingr) => total + costs.get(ingr), 0));
-    })
-    
-    // Repeat until there's no cocktail left (or the budget has been reached)
-    while (cocktails.size > 0) {
-      // Find the cheapest cocktail
-      let min, cheapest;
-      cocktailCosts.forEach(function (cost, cocktail) {
-        if (!min || cost < min) {
-          min = cost;
-          cheapest = cocktail;
-        }
-      })
-      
-      // If the min cost brings the total above the budget, stop here
-      if (totalCost + min > budget) {
-        break;
-      }
-      
-      // Otherwise, add the cocktail's ingredients to the list
-      let newIngredients = cocktails.get(cheapest);
-      ingredients.push(...newIngredients);
-      totalCost += min;
-      
-      // Then, remove the new ingredients from the remaining cocktails and update the cocktails' costs
-      cocktails.forEach(function (list, cocktail) {
-        let set = new Set(list);
-        newIngredients.forEach(function (ingr) {
-          if (set.has(ingr)) {
-            set.delete(ingr);
-            cocktailCosts.set(cocktail, cocktailCosts.get(cocktail) - costs.get(ingr));
-          }
-        });
-        
-        if (set.size === 0) {
-          // If the cocktail has no remaining ingredients, remove it
-          cocktails.delete(cocktail);
-          cocktailCosts.delete(cocktail);
-        } else {
-          // Otherwise, update its list of ingredients
-          cocktails.set(cocktail, [...set]);
-        }
-      });
-    }
-    
-    return {
-      ingredients: ingredients.sort(),
-      totalCost
-    };
-  }
-  
-  /**
    * Solve the problem with a brute force algorithm.
    * @param {Number} budget
    * @param {Map<String, Array<String>>} cocktails
@@ -280,6 +214,69 @@ export default class CocktailBar {
   }
   
   /**
+   * Solve the problem with a custom greedy algorithm.
+   * @param {Number} budget
+   * @param {Map<String, Array<String>>} cocktails
+   * @param {Map<String, Number>} ingrCosts
+   * @param {Map<String, Number>} ingrValues
+   * @return {Object}
+   *         {Array<String>} ingredients - the selected ingredients
+   *         {Number} totalCost - their total cost
+   */
+  solveCustomGreedy(budget, cocktails, ingrCosts, ingrValues) {
+    let totalCost = 0;
+    let ingredients = [];
+    
+    // Make a copy of the cocktails map
+    cocktails = new Map([...cocktails]);
+    
+    // Repeat until there's no cocktail left
+    while (cocktails.size > 0) {
+      // Compute the cost and ratio of each cocktail
+      let { costs, ratios } = this.computeCocktailCVR(cocktails, ingrCosts, ingrValues);
+      
+      // Sort the cocktails by ratio and take the best entry
+      let [cocktail, ratio] = this.sortMapDesc(ratios).entries().next().value;
+      
+      // If the cost of the best cocktail brings the total above the budget, remove it
+      const cost = costs.get(cocktail);
+      if (totalCost + cost > budget) {
+        cocktails.delete(cocktail);
+        continue;
+      }
+      
+      // Otherwise, add the cocktail's ingredients to the list
+      let newIngredients = cocktails.get(cocktail);
+      ingredients.push(...newIngredients);
+      
+      // Add the cost to the total and remove the cocktail
+      totalCost += cost;
+      cocktails.delete(cocktail);
+      
+      // Remove the new ingredients from the remaining cocktails and update the cocktails' costs
+      cocktails.forEach(function (list, c) {
+        let set = new Set(list);
+        newIngredients.forEach(function (ingr) {
+          set.delete(ingr);
+        });
+        
+        if (set.size === 0) {
+          // If the cocktail has no remaining ingredients, remove it
+          cocktails.delete(c);
+        } else {
+          // Otherwise, update its list of ingredients
+          cocktails.set(c, [...set]);
+        }
+      });
+    }
+    
+    return {
+      ingredients: ingredients.sort(),
+      totalCost
+    };
+  }
+  
+  /**
    * Map each ingredient to the cocktails in which it is used.
    * @param {Map<String, Array<String>>} cocktails - the cocktails mapped to their ingredients
    * @return {Map<String, Array<String>>} - the ingredients mapped to their cocktails
@@ -304,8 +301,8 @@ export default class CocktailBar {
    * @return {Map<String, Number>} - the ingredients mapped to their values
    */
   computeIngrValues(ingrCocktails) {
-    // Compute the values
     let ingrValues = new Map();
+    
     ingrCocktails.forEach(function (list, ingr) {
       ingrValues.set(ingr, list.length);
     });
@@ -321,8 +318,9 @@ export default class CocktailBar {
    * @return {Map<String, Number>} - the ingredients mapped to their ratios
    */
   computeIngrRatios(costs, values) {
-    // Compute ratio (iterate through `costs` map, as it is guaranteed to contain all ingredients)
     let ratios = new Map();
+    
+    // Iterate through `costs` map, as it is guaranteed to contain all ingredients
     costs.forEach(function (cost, ingr) {
       let val = values.get(ingr) || 0;
       ratios.set(ingr, val / cost);
@@ -330,6 +328,41 @@ export default class CocktailBar {
     
     // Sort from highest to lowest and return
     return this.sortMapDesc(ratios);
+  }
+  
+  /**
+   * Compute the value, cost and ratio of each cocktail.
+   * @param {Map<String, Array<String>} cocktails - the cocktails mapped to their ingredients
+   * @param {Map<String, Number>} ingCosts - the ingredients mapped to their costs
+   * @param {Map<String, Number>} ingrValues - the ingredients mapped to their values
+   * @return {Object} - the cocktails mapped to their costs, values and ratios.
+   *         {Map<String, Number>} costs
+   *         {Map<String, Number>} values
+   *         {Map<String, Number>} ratios
+   */
+  computeCocktailCVR(cocktails, ingrCosts, ingrValues) {
+    let costs = new Map();
+    let values = new Map();
+    let ratios = new Map();
+
+    cocktails.forEach(function (ingredients, cocktail) {
+      const { cost, value } = ingredients.reduce(function (totals, ingr) {
+        if (!ingrCosts.has(ingr)) {
+          throw new Error(`Cost not found for ingredient: ${ingr}`);
+        }
+        
+        return {
+          cost: totals.cost + ingrCosts.get(ingr),
+          value: totals.value + ingrValues.get(ingr)
+        };
+      }, { cost: 0, value: 0 });
+      
+      costs.set(cocktail, cost);
+      values.set(cocktail, value);
+      ratios.set(cocktail, value / cost);
+    });
+    
+    return { costs, values, ratios };
   }
   
   /**

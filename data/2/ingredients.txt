@@ -1,0 +1,83 @@
+7up                       2
+amaretto                  52
+angostura                 50
+apple juice               3
+apple schnapps            21
+banana liqueur            23
+beer                      3
+blackcurrant liqueur      20
+black raspberry liqueur   40
+blue curacao              23
+bourbon                   32
+brandy                    30
+butterscotch schnapps     27
+campari                   35
+canadian whisky           33
+champagne                 30
+chartreuse                77
+cherry brandy             23
+citrus vodka              42
+coconut liqueur           15
+coconut rum               50
+coffee                    9
+coffee liqueur            30
+cointreau                 47
+cola                      3
+cranberry juice           7
+cream                     3
+creme de cacao            23
+dark rum                  42
+dry vermouth              13
+eggnog                    8
+egg white                 5
+galliano                  47
+gin                       34
+ginger ale                2
+gold rum                  38
+goldschlager              80
+grand marnier             50
+grapefruit juice          3
+grenadine                 13
+half & half               3
+hazelnut liqueur          37
+hot chocolate             8
+ice cream                 5
+irish cream               29
+irish mist                57
+irish whiskey             40
+jagermeister              45
+lemon juice               2
+lime juice                2
+midori                    36
+milk                      2
+mint liqueur              23
+orange curacao            23
+orange juice              2
+oregat syrup              20
+overproof rum             55
+peach juice               3
+peach schnapps            39
+peppermint schnapps       30
+pineapple juice           3
+scotch                    35
+sherry                    17
+sloe gin                  53
+soda                      1
+southern comfort          34
+sprite                    3
+stout beer                4
+strawberry                3
+strawberry liqueur        30
+sugar syrup               15
+sweet vermouth            13
+tabasco sauce             4
+tequila                   40
+tomato juice              3
+tonic                     1
+triple sec                23
+vodka                     30
+whipped cream             4
+white creme de cacao      23
+white rum                 30
+white sambuca             47
+worcester sauce           2

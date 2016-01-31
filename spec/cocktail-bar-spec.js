@@ -34,6 +34,12 @@ describe("CocktailBar", function() {
     ['gin', 1 / 34]
   ]);
   
+  const COCKTAIL_RATIOS = new Map([
+    ['Bloody Mary', 5 / 32],
+    ['Gin Fizz', 4 / 36],
+    ['Screwdriver', 5 / 32]
+  ]);
+  
   const SOLUTION = {
     ingredients: ['lemon juice', 'vodka'],
     totalCost: 32,
@@ -79,6 +85,13 @@ describe("CocktailBar", function() {
     });
   });
   
+  describe("#computeCocktailCVR", function() {
+    it("computes the cost, value and ratio of each cocktail", function() {
+      let { ratios } = this.bar.computeCocktailCVR(COCKTAILS, INGREDIENTS, INGR_VALUES);
+      expect([...ratios]).toEqual([...COCKTAIL_RATIOS]);
+    });
+  });
+  
   describe("#findPossibleCocktails", function () {
     it("finds the cocktails that can be made with a specific set of ingredients", function () {
       let cocktails = this.bar.findPossibleCocktails(COCKTAILS, SOLUTION.ingredients);
@@ -113,16 +126,6 @@ describe("CocktailBar", function() {
     });
   });
   
-  describe("#solveCustomGreedy", function () {
-    it("finds the optimal set of ingredients for the bar using a custom greedy algorithm", function () {
-      let solution = this.bar.solveCustomGreedy(BUDGET, COCKTAILS, INGREDIENTS);
-      expect(solution).toEqual({
-        ingredients: SOLUTION.ingredients,
-        totalCost: SOLUTION.totalCost
-      });
-    });
-  });
-  
   describe("#solveBruteForce", function () {
     it("finds the optimal set of ingredients for the bar using a brute force algorithm", function () {
       let solution = this.bar.solveBruteForce(BUDGET, COCKTAILS, INGREDIENTS);
@@ -131,6 +134,16 @@ describe("CocktailBar", function() {
         totalCost: SOLUTION.totalCost,
         cocktails: SOLUTION.cocktails,
         totalValue: SOLUTION.totalValue
+      });
+    });
+  });
+  
+  describe("#solveCustomGreedy", function () {
+    it("finds the optimal set of ingredients for the bar using a custom greedy algorithm", function () {
+      let solution = this.bar.solveCustomGreedy(BUDGET, COCKTAILS, INGREDIENTS, INGR_VALUES);
+      expect(solution).toEqual({
+        ingredients: SOLUTION.ingredients,
+        totalCost: SOLUTION.totalCost
       });
     });
   });
@@ -144,12 +157,12 @@ describe("CocktailBar", function() {
       let solution = this.bar.solve(ALGORITHMS.dp);
       expect(solution).toEqual(SOLUTION);
     });
-    it("can solve the problem with a custom greedy algorithm", function () {
-      let solution = this.bar.solve(ALGORITHMS.customGreedy);
-      expect(solution).toEqual(SOLUTION);
-    });
     it("can solve the problem with a brute force algorithm", function () {
       let solution = this.bar.solve(ALGORITHMS.bruteForce);
+      expect(solution).toEqual(SOLUTION);
+    });
+    it("can solve the problem with a custom greedy algorithm", function () {
+      let solution = this.bar.solve(ALGORITHMS.customGreedy);
       expect(solution).toEqual(SOLUTION);
     });
   });
